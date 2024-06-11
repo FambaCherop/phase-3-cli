@@ -1,0 +1,35 @@
+import sqlite3
+
+def create_tables():
+    connection = sqlite3.connect('recipes.db')
+    cursor = connection.cursor()
+
+
+    cursor.execute('''CREATE TABLE recipes (
+                        id INTEGER PRIMARY KEY,
+                        name TEXT
+                    )''')
+
+
+    cursor.execute('''CREATE TABLE ingredients (
+                        id INTEGER PRIMARY KEY,
+                        name TEXT
+                    )''')
+
+
+    cursor.execute('''CREATE TABLE recipe_ingredients (
+                        recipe_id INTEGER,
+                        ingredient_id INTEGER,
+                        quantity TEXT,
+                        FOREIGN KEY(recipe_id) REFERENCES recipes(id),
+                        FOREIGN KEY(ingredient_id) REFERENCES ingredients(id),
+                        PRIMARY KEY (recipe_id, ingredient_id)
+                    )''')
+
+
+    connection.commit()
+
+
+    connection.close()
+
+create_tables()
