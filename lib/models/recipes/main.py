@@ -1,5 +1,5 @@
-# recipes/main.py
-from recipes.cli import main
+# main.py
+from .cli import main
 
 if __name__ == "__main__":
     main()
