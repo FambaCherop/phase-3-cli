@@ -1,166 +1,205 @@
-# import sqlite3
-# import random
+import sqlite3
 
-# def create_tables():
-#     connection = sqlite3.connect('recipes.db')
-#     cursor = connection.cursor()
+def create_tables():
+    connection = sqlite3.connect('recipes.db')
+    cursor = connection.cursor()
 
-#     cursor.execute('''CREATE TABLE IF NOT EXISTS recipes (
-#                         id INTEGER PRIMARY KEY,
-#                         name TEXT
-#                     )''')
+    cursor.execute('''CREATE TABLE IF NOT EXISTS recipes (
+                        id INTEGER PRIMARY KEY,
+                        name TEXT
+                    )''')
 
-#     cursor.execute('''CREATE TABLE IF NOT EXISTS ingredients (
-#                         id INTEGER PRIMARY KEY,
-#                         name TEXT
-#                     )''')
+    cursor.execute('''CREATE TABLE IF NOT EXISTS ingredients (
+                        id INTEGER PRIMARY KEY,
+                        name TEXT
+                    )''')
 
-#     cursor.execute('''CREATE TABLE IF NOT EXISTS recipe_ingredients (
-#                         recipe_id INTEGER,
-#                         ingredient_id INTEGER,
-#                         quantity TEXT,
-#                         FOREIGN KEY(recipe_id) REFERENCES recipes(id),
-#                         FOREIGN KEY(ingredient_id) REFERENCES ingredients(id),
-#                         PRIMARY KEY (recipe_id, ingredient_id)
-#                     )''')
+    cursor.execute('''CREATE TABLE IF NOT EXISTS recipe_ingredients (
+                        recipe_id INTEGER,
+                        ingredient_id INTEGER,
+                        quantity TEXT,
+                        FOREIGN KEY(recipe_id) REFERENCES recipes(id),
+                        FOREIGN KEY(ingredient_id) REFERENCES ingredients(id),
+                        PRIMARY KEY (recipe_id, ingredient_id)
+                    )''')
 
-#     cursor.execute('''CREATE TABLE IF NOT EXISTS meal_plans (
-#                         id INTEGER PRIMARY KEY,
-#                         breakfast TEXT,
-#                         lunch TEXT,
-#                         dinner TEXT
-#                     )''')
+    connection.commit()
+    connection.close()
 
-#     connection.commit()
-#     connection.close()
+def add_recipe(name):
+    connection = sqlite3.connect('recipes.db')
+    cursor = connection.cursor()
 
-# def add_recipe(name):
-#     connection = sqlite3.connect('recipes.db')
-#     cursor = connection.cursor()
+    cursor.execute("INSERT INTO recipes (name) VALUES (?)", (name,))
+    recipe_id = cursor.lastrowid
 
-#     cursor.execute("INSERT INTO recipes (name) VALUES (?)", (name,))
-#     recipe_id = cursor.lastrowid
+    connection.commit()
+    connection.close()
 
-#     connection.commit()
-#     connection.close()
+    return recipe_id
 
-#     return recipe_id
+def delete_recipe(recipe_id):
+    connection = sqlite3.connect('recipes.db')
+    cursor = connection.cursor()
 
-# def add_ingredient(name):
-#     connection = sqlite3.connect('recipes.db')
-#     cursor = connection.cursor()
+    cursor.execute("DELETE FROM recipes WHERE id = ?", (recipe_id,))
+    connection.commit()
+    connection.close()
 
-#     cursor.execute("INSERT INTO ingredients (name) VALUES (?)", (name,))
-#     ingredient_id = cursor.lastrowid
+def add_ingredient(name):
+    connection = sqlite3.connect('recipes.db')
+    cursor = connection.cursor()
 
-#     connection.commit()
-#     connection.close()
+    cursor.execute("INSERT INTO ingredients (name) VALUES (?)", (name,))
+    ingredient_id = cursor.lastrowid
 
-#     return ingredient_id
+    connection.commit()
+    connection.close()
 
-# def add_recipe_ingredient(recipe_id, ingredient_id, quantity):
-#     connection = sqlite3.connect('recipes.db')
-#     cursor = connection.cursor()
+    return ingredient_id
 
-#     cursor.execute("INSERT INTO recipe_ingredients (recipe_id, ingredient_id, quantity) VALUES (?, ?, ?)", (recipe_id, ingredient_id, quantity))
+def delete_ingredient(ingredient_id):
+    connection = sqlite3.connect('recipes.db')
+    cursor = connection.cursor()
 
-#     connection.commit()
-#     connection.close()
+    cursor.execute("DELETE FROM ingredients WHERE id = ?", (ingredient_id,))
+    connection.commit()
+    connection.close()
 
-# def delete_recipe(recipe_id):
-#     connection = sqlite3.connect('recipes.db')
-#     cursor = connection.cursor()
+def add_recipe_ingredient(recipe_id, ingredient_id, quantity):
+    connection = sqlite3.connect('recipes.db')
+    cursor = connection.cursor()
 
-#     cursor.execute("DELETE FROM recipes WHERE id = ?", (recipe_id,))
-#     connection.commit()
-#     connection.close()
+    cursor.execute("INSERT INTO recipe_ingredients (recipe_id, ingredient_id, quantity) VALUES (?, ?, ?)", (recipe_id, ingredient_id, quantity))
 
-# def delete_ingredient(ingredient_id):
-#     connection = sqlite3.connect('recipes.db')
-#     cursor = connection.cursor()
+    connection.commit()
+    connection.close()
 
-#     cursor.execute("DELETE FROM ingredients WHERE id = ?", (ingredient_id,))
-#     connection.commit()
-#     connection.close()
+def view_all_recipes():
+    connection = sqlite3.connect('recipes.db')
+    cursor = connection.cursor()
 
-# def create_meal_plan():
-#     print("Creating meal plan...")
-#     # Placeholder meal plan generation logic
-#     meals = ["Breakfast", "Lunch", "Dinner"]
-#     meal_plan = {meal: random.choice(["Spaghetti", "Chicken Salad", "Omelette"]) for meal in meals}
-#     print("Meal plan created!")
-#     print("Your meal plan for the day is:")
-#     for meal, dish in meal_plan.items():
-#         print(f"{meal}: {dish}")
+    cursor.execute("SELECT * FROM recipes")
+    recipes = cursor.fetchall()
 
-# def add_meal_plan(breakfast, lunch, dinner):
-#     connection = sqlite3.connect('recipes.db')
-#     cursor = connection.cursor()
+    connection.close()
 
-#     cursor.execute("INSERT INTO meal_plans (breakfast, lunch, dinner) VALUES (?, ?, ?)",
-#                    (breakfast, lunch, dinner))
-    
-#     connection.commit()
-#     connection.close()
+    if recipes:
+        print("Recipes:")
+        for recipe in recipes:
+            print(f"{recipe[0]}. {recipe[1]}")
+    else:
+        print("No recipes found.")
 
-# def delete_meal_plan(meal_plan_id):
-#     connection = sqlite3.connect('recipes.db')
-#     cursor = connection.cursor()
+def view_all_ingredients():
+    connection = sqlite3.connect('recipes.db')
+    cursor = connection.cursor()
 
-#     cursor.execute("DELETE FROM meal_plans WHERE id = ?", (meal_plan_id,))
-    
-#     connection.commit()
-#     connection.close()
+    cursor.execute("SELECT * FROM ingredients")
+    ingredients = cursor.fetchall()
 
-# def main():
-#     create_tables()
+    connection.close()
 
-#     while True:
-#         print("1. Add recipe")
-#         print("2. Add ingredient")
-#         print("3. Add ingredient to recipe")
-#         print("4. Delete recipe")
-#         print("5. Delete ingredient")
-#         print("6. Create meal plan")
-#         print("7. Add meal plan")
-#         print("8. Delete meal plan")
-#         print("9. Exit")
+    if ingredients:
+        print("Ingredients:")
+        for ingredient in ingredients:
+            print(f"{ingredient[0]}. {ingredient[1]}")
+    else:
+        print("No ingredients found.")
+
+def view_ingredients_of_recipe(recipe_id):
+    connection = sqlite3.connect('recipes.db')
+    cursor = connection.cursor()
+
+    cursor.execute('''SELECT ingredients.name, recipe_ingredients.quantity
+                      FROM recipe_ingredients
+                      JOIN ingredients ON recipe_ingredients.ingredient_id = ingredients.id
+                      WHERE recipe_ingredients.recipe_id = ?''', (recipe_id,))
+    ingredients = cursor.fetchall()
+
+    connection.close()
+
+    if ingredients:
+        print(f"Ingredients for recipe ID {recipe_id}:")
+        for ingredient in ingredients:
+            print(f"{ingredient[0]} - {ingredient[1]}")
+    else:
+        print(f"No ingredients found for recipe ID {recipe_id}.")
+
+def update_recipe_name(recipe_id, new_name):
+    connection = sqlite3.connect('recipes.db')
+    cursor = connection.cursor()
+
+    cursor.execute("UPDATE recipes SET name = ? WHERE id = ?", (new_name, recipe_id))
+
+    connection.commit()
+    connection.close()
+
+def update_ingredient_name(ingredient_id, new_name):
+    connection = sqlite3.connect('recipes.db')
+    cursor = connection.cursor()
+
+    cursor.execute("UPDATE ingredients SET name = ? WHERE id = ?", (new_name, ingredient_id))
+
+    connection.commit()
+    connection.close()
+
+def main():
+    create_tables()
+
+    while True:
+        print("1. Add recipe")
+        print("2. Add ingredient")
+        print("3. Add ingredient to recipe")
+        print("4. Delete recipe")
+        print("5. Delete ingredient")
+        print("6. View all recipes")
+        print("7. View all ingredients")
+        print("8. View ingredients of a recipe")
+        print("9. Update recipe name")
+        print("10. Update ingredient name")
+        print("0. Exit")
         
-#         choice = input("Enter your choice: ")
+        choice = input("Enter your choice: ")
 
-#         if choice == "1":
-#             name = input("Enter the name of the recipe: ")
-#             add_recipe(name)
-#         elif choice == "2":
-#             name = input("Enter the name of the ingredient: ")
-#             add_ingredient(name)
-#         elif choice == "3":
-#             recipe_id = int(input("Enter the ID of the recipe: "))
-#             ingredient_id = int(input("Enter the ID of the ingredient: "))
-#             quantity = input("Enter the quantity: ")
-#             add_recipe_ingredient(recipe_id, ingredient_id, quantity)
-#         elif choice == "4":
-#             recipe_id = int(input("Enter the ID of the recipe to delete: "))
-#             delete_recipe(recipe_id)
-#         elif choice == "5":
-#             ingredient_id = int(input("Enter the ID of the ingredient to delete: "))
-#             delete_ingredient(ingredient_id)
-#         elif choice == "6":
-#             create_meal_plan()
-#         elif choice == "7":
-#             breakfast = input("Enter breakfast: ")
-#             lunch = input("Enter lunch: ")
-#             dinner = input("Enter dinner: ")
-#             add_meal_plan(breakfast, lunch, dinner)
-#         elif choice == "8":
-#             meal_plan_id = int(input("Enter the ID of the meal plan to delete: "))
-#             delete_meal_plan(meal_plan_id)
-#         elif choice == "9":
-#             break
-#         else:
-#             print("Invalid choice. Please try again.")
+        if choice == "1":
+            name = input("Enter the name of the recipe: ")
+            add_recipe(name)
+        elif choice == "2":
+            name = input("Enter the name of the ingredient: ")
+            add_ingredient(name)
+        elif choice == "3":
+            recipe_id = int(input("Enter the ID of the recipe: "))
+            ingredient_id = int(input("Enter the ID of the ingredient: "))
+            quantity = input("Enter the quantity: ")
+            add_recipe_ingredient(recipe_id, ingredient_id, quantity)
+        elif choice == "4":
+            recipe_id = int(input("Enter the ID of the recipe to delete: "))
+            delete_recipe(recipe_id)
+        elif choice == "5":
+            ingredient_id = int(input("Enter the ID of the ingredient to delete: "))
+            delete_ingredient(ingredient_id)
+        elif choice == "6":
+            view_all_recipes()
+        elif choice == "7":
+            view_all_ingredients()
+        elif choice == "8":
+            recipe_id = int(input("Enter the ID of the recipe: "))
+            view_ingredients_of_recipe(recipe_id)
+        elif choice == "9":
+            recipe_id = int(input("Enter the ID of the recipe: "))
+            new_name = input("Enter the new name of the recipe: ")
+            update_recipe_name(recipe_id, new_name)
+        elif choice == "10":
+            ingredient_id = int(input("Enter the ID of the ingredient: "))
+            new_name = input("Enter the new name of the ingredient: ")
+            update_ingredient_name(ingredient_id, new_name)
+        elif choice == "0":
+            break
+        else:
+            print("Invalid choice. Please try again.")
 
-#     print("Recipes, ingredients, and meal plans managed successfully!")
+    print("Recipes and ingredients managed successfully!")
 
-# if __name__ == "__main__":
-#     main()
+if __name__ == "__main__":
+    main()

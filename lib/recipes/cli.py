@@ -1,9 +1,10 @@
 # recipes/cli.py
-from recipes.database import create_tables
-from recipes.recipe import add_recipe, delete_recipe
-from recipes.ingredients import add_ingredient, delete_ingredient
-from recipes.recipe_ingredients import add_recipe_ingredient
-from recipes.meal_plans import create_meal_plan, add_meal_plan, delete_meal_plan
+from database import create_tables
+from recipe import add_recipe, delete_recipe
+from ingredients import add_ingredient, delete_ingredient
+from recipe_ingredients import add_recipe_ingredient
+from meal_plans import create_meal_plan, add_meal_plan, delete_meal_plan
+
 
 def main():
     create_tables()
